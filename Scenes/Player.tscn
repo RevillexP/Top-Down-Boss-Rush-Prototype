@@ -1,0 +1,68 @@
+[gd_scene load_steps=8 format=3 uid="uid://1vw6d0oipyxu"]
+
+[ext_resource type="Script" path="res://Scripts/Player.gd" id="1_06jsy"]
+[ext_resource type="Texture2D" uid="uid://d3wwc4waapelb" path="res://GFX/Phighting Character Rendition 2.png" id="2_r50pq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lpp56"]
+size = Vector2(30, 112)
+
+[sub_resource type="Animation" id="Animation_8qs8c"]
+resource_name = "Idle"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.370772, 0.770772, 1.18539, 1.76667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 20), Vector2(0, 0), Vector2(0, 20), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_v82ww"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p4f4h"]
+_data = {
+"Idle": SubResource("Animation_8qs8c"),
+"RESET": SubResource("Animation_v82ww")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h6nsa"]
+size = Vector2(27, 114)
+
+[node name="CharacterBody2D" type="CharacterBody2D" groups=["Player"]]
+position = Vector2(960, 540)
+collision_layer = 8
+script = ExtResource("1_06jsy")
+dash_speed = 1600.0
+dash_dur = 0.35
+dash_cd = 0.2
+laser_speed = 2000.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(18, -17)
+shape = SubResource("RectangleShape2D_lpp56")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("2_r50pq")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_p4f4h")
+}
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(17.5, -16)
+shape = SubResource("RectangleShape2D_h6nsa")
+
+[connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]

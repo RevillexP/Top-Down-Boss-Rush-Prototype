@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://d252ox6ns4ut2"]
+
+[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Laser Bullet.png" id="1_dbva5"]
+[ext_resource type="Script" path="res://Scenes/splatterBomb.gd" id="1_lpgtm"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lkirm"]
+radius = 77.0
+
+[node name="Marker2D" type="Marker2D"]
+script = ExtResource("1_lpgtm")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 1, 0.87451, 1)
+scale = Vector2(3.06074, 3.06074)
+texture = ExtResource("1_dbva5")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_lkirm")

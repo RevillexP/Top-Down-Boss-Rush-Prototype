@@ -1,0 +1,90 @@
+[gd_scene load_steps=14 format=3 uid="uid://c75g1mwe4gads"]
+
+[ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_1huio"]
+[ext_resource type="Texture2D" uid="uid://xml4k657a2ab" path="res://GFX/SlimeAnims/frame0000.png" id="2_4t8ay"]
+[ext_resource type="Texture2D" uid="uid://cvscmqbp532o" path="res://GFX/SlimeAnims/frame0001.png" id="3_h3biq"]
+[ext_resource type="Texture2D" uid="uid://capr44iy5phhb" path="res://GFX/SlimeAnims/frame0002.png" id="4_0avkj"]
+[ext_resource type="Texture2D" uid="uid://bv4eqsr6swlgg" path="res://GFX/SlimeAnims/frame0003.png" id="5_oqx03"]
+[ext_resource type="Texture2D" uid="uid://d46icibwqjmu" path="res://GFX/SlimeAnims/frame0004.png" id="6_yrdxm"]
+[ext_resource type="Texture2D" uid="uid://dkr0y0obp245s" path="res://GFX/SlimeAnims/frame0005.png" id="7_hdfe1"]
+[ext_resource type="Texture2D" uid="uid://c5cte3bha1tip" path="res://GFX/SlimeAnims/frame0006.png" id="8_or1nb"]
+[ext_resource type="Texture2D" uid="uid://bn30br1depf3q" path="res://GFX/SlimeAnims/frame0007.png" id="9_rub27"]
+[ext_resource type="PackedScene" uid="uid://ono5fmgfxyl2" path="res://Scenes/explosion_fx.tscn" id="10_yqv27"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wdr3i"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_4t8ay")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_h3biq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_0avkj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_oqx03")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_yrdxm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_hdfe1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_or1nb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_rub27")
+}],
+"loop": true,
+"name": &"Slime",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_pvacr"]
+radius = 27.0
+height = 58.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qyhds"]
+radius = 135.237
+
+[node name="CharacterBody2D" type="CharacterBody2D" groups=["Player"]]
+collision_layer = 0
+script = ExtResource("1_1huio")
+speed = 30
+explosionTimer = 1.5
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, 4)
+scale = Vector2(1.9375, 1.9375)
+sprite_frames = SubResource("SpriteFrames_wdr3i")
+animation = &"Slime"
+frame_progress = 0.480125
+
+[node name="HurtBox" type="Area2D" parent="." groups=["Enemy"]]
+collision_layer = 2
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(0, 13)
+shape = SubResource("CapsuleShape2D_pvacr")
+
+[node name="ExplosionRadius" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 8
+
+[node name="ExplosionCollision" type="CollisionShape2D" parent="ExplosionRadius"]
+position = Vector2(0, 10)
+shape = SubResource("CircleShape2D_qyhds")
+disabled = true
+
+[node name="ExplosionFX" parent="." instance=ExtResource("10_yqv27")]
+scale_amount_min = 20.0
+scale_amount_max = 30.0
+
+[connection signal="area_entered" from="HurtBox" to="." method="_on_area_2d_area_entered"]
+[connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
+[connection signal="body_entered" from="HurtBox" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="ExplosionRadius" to="." method="_on_explosion_radius_body_entered"]

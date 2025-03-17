@@ -1,0 +1,125 @@
+[gd_scene load_steps=7 format=3 uid="uid://cw3vj27glq5k4"]
+
+[ext_resource type="Script" path="res://Scripts/World.gd" id="1_xbb8i"]
+[ext_resource type="Texture2D" uid="uid://cvgibl718tlyv" path="res://GFX/Stage1Background.png" id="2_5grku"]
+[ext_resource type="PackedScene" uid="uid://1vw6d0oipyxu" path="res://Scenes/Player.tscn" id="2_ojswc"]
+[ext_resource type="PackedScene" uid="uid://dk5bgua8t61vn" path="res://Scenes/Stage1Boss.tscn" id="4_q6b5c"]
+[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Laser Bullet.png" id="5_t356n"]
+[ext_resource type="PackedScene" uid="uid://hm0nlqe7dui6" path="res://Scenes/HealthBar.tscn" id="5_vu1md"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_xbb8i")
+
+[node name="BG" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+scale = Vector2(2, 2)
+texture = ExtResource("2_5grku")
+
+[node name="Player" parent="." node_paths=PackedStringArray("healthText", "bulletHolder") instance=ExtResource("2_ojswc")]
+position = Vector2(1355, -143)
+health = 15
+healthText = NodePath("../CanvasLayer/PlayerHealth")
+dash_speed = 2400.0
+dash_dur = 0.175
+dash_cd = 0.15
+bulletHolder = NodePath("../Holders/Bullets")
+bullet_cd = 0.15
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position = Vector2(-960, -540)
+offset = Vector2(960, 540)
+
+[node name="Holders" type="Node" parent="."]
+
+[node name="Enemies" type="Node" parent="Holders"]
+
+[node name="Bullets" type="Node" parent="Holders"]
+
+[node name="ExplosionHolder" type="Node" parent="Holders"]
+
+[node name="SpawnPoints" type="Node" parent="Holders"]
+
+[node name="Position 1" type="Marker2D" parent="Holders/SpawnPoints"]
+position = Vector2(1036, -611)
+
+[node name="Position 2" type="Marker2D" parent="Holders/SpawnPoints"]
+position = Vector2(-1029, 472)
+
+[node name="Position 3" type="Marker2D" parent="Holders/SpawnPoints"]
+position = Vector2(999, 1781)
+
+[node name="Position 4" type="Marker2D" parent="Holders/SpawnPoints"]
+position = Vector2(2967, 662)
+
+[node name="Position 5" type="Marker2D" parent="Holders/SpawnPoints"]
+position = Vector2(1536, 357)
+
+[node name="Spawn Timer" type="Timer" parent="Holders"]
+autostart = true
+
+[node name="Luita" parent="." node_paths=PackedStringArray("hp_bar", "player", "roomCorner1", "roomCorner2", "bombSplatterC1", "bombSplatterC2", "bossMapMidPoint") instance=ExtResource("4_q6b5c")]
+position = Vector2(723, -559)
+hp_bar = NodePath("../CanvasLayer/HealthBar")
+player = NodePath("../Player")
+roomCorner1 = NodePath("../BossStageC1")
+roomCorner2 = NodePath("../BossStageC2")
+soar_height = 1050.0
+soar_time = 0.4
+bombSplatterInBTW = 0.08
+bombSplatterC1 = NodePath("BombSplatterCorner1")
+bombSplatterC2 = NodePath("BombSplatterCorner2")
+closeUpSpeed = 18.0
+partMidPointWalkSpeed = 300.0
+bossMapMidPoint = NodePath("../BossMapMidPoint")
+angularVel = 0.01
+bombingMaxSize = 1000.0
+
+[node name="BombSplatterCorner1" type="Marker2D" parent="Luita"]
+position = Vector2(2042.5, 1415)
+scale = Vector2(2.5, 2.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="Luita/BombSplatterCorner1"]
+modulate = Color(0, 0, 0, 1)
+texture = ExtResource("5_t356n")
+
+[node name="BombSplatterCorner2" type="Marker2D" parent="Luita"]
+position = Vector2(-3725, -3447.5)
+scale = Vector2(2.5, 2.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="Luita/BombSplatterCorner2"]
+modulate = Color(0, 0, 0, 1)
+texture = ExtResource("5_t356n")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HealthBar" parent="CanvasLayer" instance=ExtResource("5_vu1md")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -700.0
+offset_top = -124.0
+offset_right = 700.0
+offset_bottom = -54.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 8
+
+[node name="PlayerHealth" type="Label" parent="CanvasLayer"]
+offset_right = 539.0
+offset_bottom = 92.0
+theme_override_font_sizes/font_size = 50
+text = "tejdfddghfg"
+
+[node name="BossMapMidPoint" type="Marker2D" parent="."]
+position = Vector2(454, -963)
+
+[node name="BossStageC1" type="Marker2D" parent="."]
+position = Vector2(1515, 73)
+
+[node name="BossStageC2" type="Marker2D" parent="."]
+position = Vector2(-728, -1913)
+
+[connection signal="timeout" from="Holders/Spawn Timer" to="." method="_on_spawn_timer_timeout"]

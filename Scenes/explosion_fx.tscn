@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://ono5fmgfxyl2"]
+
+[sub_resource type="Curve" id="Curve_m4qhc"]
+min_value = -360.0
+max_value = 360.0
+_data = [Vector2(0.0280899, 360), 0.0, 0.0, 0, 0, Vector2(0.859551, -272.967), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_fany3"]
+bake_resolution = 500
+_data = [Vector2(0.0561798, -412.088), 0.0, 0.0, 0, 0, Vector2(1, -500), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_fxlrd"]
+_data = [Vector2(0.0168539, 1), 0.0, 0.0, 0, 0, Vector2(0.207865, 0.461538), 0.0, 0.0, 0, 0, Vector2(0.966292, 0.230769), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_3xby6"]
+interpolation_color_space = 1
+offsets = PackedFloat32Array(0, 0.74, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.761112, 0.761112, 0.761112, 1, 0, 0, 0, 1)
+
+[node name="ExplosionFX" type="CPUParticles2D"]
+emitting = false
+amount = 150
+lifetime = 1.4
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2(30, 20)
+initial_velocity_min = 120.0
+initial_velocity_max = 180.0
+angular_velocity_min = -421.81
+angular_velocity_max = 552.73
+angular_velocity_curve = SubResource("Curve_m4qhc")
+orbit_velocity_curve = SubResource("Curve_fany3")
+radial_accel_min = 60.61
+radial_accel_max = 100.0
+tangential_accel_min = 54.55
+tangential_accel_max = 74.75
+scale_amount_min = 5.0
+scale_amount_max = 10.0
+scale_amount_curve = SubResource("Curve_fxlrd")
+color = Color(0.556863, 0.411765, 1, 1)
+color_ramp = SubResource("Gradient_3xby6")

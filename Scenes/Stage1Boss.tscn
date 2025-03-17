@@ -1,0 +1,150 @@
+[gd_scene load_steps=12 format=3 uid="uid://dk5bgua8t61vn"]
+
+[ext_resource type="Script" path="res://Scripts/Boss.gd" id="1_bj3gw"]
+[ext_resource type="Texture2D" uid="uid://dve382qafxr7l" path="res://GFX/Stage 1 Boss.png" id="1_dcm06"]
+[ext_resource type="Texture2D" uid="uid://lkem6se35syg" path="res://GFX/TriangularSwipe.png" id="3_16eyj"]
+[ext_resource type="Texture2D" uid="uid://cy4dtq0yc055l" path="res://GFX/Laser Attack.png" id="3_n2rp0"]
+
+[sub_resource type="Animation" id="Animation_hmgbh"]
+resource_name = "Float_Idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.733333, 1.03333),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 70), Vector2(0, -70), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_6gb0g"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t2lea"]
+_data = {
+"Float_Idle": SubResource("Animation_hmgbh"),
+"RESET": SubResource("Animation_6gb0g")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mc7e0"]
+radius = 458.701
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ficbs"]
+size = Vector2(2098, 71)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8rotw"]
+size = Vector2(1292.5, 622.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j2jxw"]
+size = Vector2(3000, 3000)
+
+[node name="Luita" type="CharacterBody2D"]
+scale = Vector2(0.4, 0.4)
+script = ExtResource("1_bj3gw")
+soar_time = 1.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_dcm06")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_t2lea")
+}
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 16
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HurtBox"]
+position = Vector2(-12.5, 362.5)
+polygon = PackedVector2Array(30, -463, -10, -445, -90, -367, -138, -401, -253, -386, -333, -261, -303, -163, -222, -118, -126, -100, -67, -150, -28, -224, -29, -288, -52, -326, -9, -370, 22, -227, -33, -183, -94, -80, 250, -91, 245, -124, 90, -230, 92, -452, 65, -466, 116, -507, 134, -619, 79, -667, -21, -618, -26, -530, 23, -489)
+
+[node name="DiveAttackArea" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DiveAttackArea"]
+shape = SubResource("CircleShape2D_mc7e0")
+disabled = true
+
+[node name="PartitionerCollision" type="Area2D" parent="."]
+rotation = 6.28319
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PartitionerCollision"]
+position = Vector2(2597.5, -3.75)
+scale = Vector2(2.5, 2.5)
+shape = SubResource("RectangleShape2D_ficbs")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="PartitionerCollision"]
+position = Vector2(-12.5, 2622.5)
+rotation = 1.57626
+scale = Vector2(2.5, 2.5)
+shape = SubResource("RectangleShape2D_ficbs")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="PartitionerCollision"]
+position = Vector2(17.5, -2710)
+rotation = 1.57626
+scale = Vector2(2.5, 2.5)
+shape = SubResource("RectangleShape2D_ficbs")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="PartitionerCollision"]
+position = Vector2(-2707.5, -2.5)
+scale = Vector2(2.5, 2.5)
+shape = SubResource("RectangleShape2D_ficbs")
+
+[node name="CloseRangeBombing" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CloseRangeBombing"]
+position = Vector2(783.75, -30)
+shape = SubResource("RectangleShape2D_8rotw")
+
+[node name="Sprite2D" type="Sprite2D" parent="CloseRangeBombing"]
+visible = false
+position = Vector2(805, 15.0001)
+rotation = 1.5708
+scale = Vector2(10.8963, 10.325)
+texture = ExtResource("3_n2rp0")
+
+[node name="DialogStartArea" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 8
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DialogStartArea"]
+position = Vector2(42.5, 372.5)
+shape = SubResource("RectangleShape2D_j2jxw")
+disabled = true
+
+[node name="TriangularSwipe" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="TriangularSwipe"]
+scale = Vector2(0.678121, 0.540588)
+polygon = PackedVector2Array(22.5, -22.5, 1555, -947.5, 1560, 937.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="TriangularSwipe"]
+visible = false
+position = Vector2(550, 15)
+rotation = -1.5708
+scale = Vector2(2.01765, 1.92034)
+texture = ExtResource("3_16eyj")
+
+[connection signal="area_entered" from="HurtBox" to="." method="_on_area_2d_area_entered"]
+[connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]
+[connection signal="area_entered" from="DialogStartArea" to="." method="DialogAreaEntered"]

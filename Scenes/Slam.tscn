@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2pm6wmq5nfa3"]
+
+[ext_resource type="Script" path="res://Scripts/Slam.gd" id="1_eo50f"]
+[ext_resource type="Texture2D" uid="uid://bh8rm26xosp87" path="res://GFX/Slam attack.png" id="2_js0ow"]
+
+[node name="StaticBody2D" type="StaticBody2D" groups=["AreaEffect", "Player_attack"]]
+script = ExtResource("1_eo50f")
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 2
+
+[node name="RightColl" type="CollisionPolygon2D" parent="HurtBox"]
+polygon = PackedVector2Array(132, -146, -138, -20, 132, 131)
+
+[node name="LeftColl" type="CollisionPolygon2D" parent="HurtBox"]
+polygon = PackedVector2Array(-136, -146, -134, 133, 139, -21)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_js0ow")
