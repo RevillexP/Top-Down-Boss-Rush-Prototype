@@ -3,6 +3,7 @@ extends CharacterBody2D
 #TODO: When you add the animations, make all attacks WAIT for it finish using signals, then start. that should be good i hope.
 #3/15/25 This is so godsbedamned fucking frustrating 
 
+#region Debug Variables
 var global_delta : float
 var playerDist
 var bossMapSizeX : float
@@ -22,6 +23,12 @@ var lines : Array[String] = [
 	"SINE AND COSINE BEST GIRLS",
 	"I LIKE d^2x/dt^2 = (k/m)x!!!!"
 ]
+
+@export var audioPlayer : AudioStreamPlayer
+var swipeAudio = preload("res://SFX/slash-21834.mp3")
+var laserChargeAudio = preload("res://SFX/523553__matrixxx__tv-shutdown.wav")
+var diveBombAudio = preload("res://SFX/412165__poligonstudio__arcade-level.wav")
+#endregion
 
 #region General Variables
 @export_category("General Variables")
@@ -102,7 +109,7 @@ func _ready() -> void:
 	
 	$TriangularSwipe/CollisionPolygon2D.disabled = true
 	
-	battleStarted = true
+	inAttack = false
 
 func diveBomb() -> void:
 	inAttack = true
@@ -110,8 +117,13 @@ func diveBomb() -> void:
 	var sprite = $Sprite2D
 	var dive_pos = player.position
 	var dive : Tween = get_tree().create_tween()
-	dive.tween_property($".", "position", Vector2(position.x, -soar_height), soar_time).set_trans(Tween.TRANS_QUAD)
+	
+	audioPlayer.stream = diveBombAudio
+	audioPlayer.play()
+	
+	dive.tween_property($".", "position", Vector2(0, -soar_height), soar_time).set_trans(Tween.TRANS_QUAD).as_relative()
 	dive.tween_property($".", "position", player.position, dive_time).set_trans(Tween.TRANS_EXPO)
+	
 	$DiveAttackArea/CollisionShape2D.set_deferred("disabled", false)
 	await get_tree().create_timer(diveColStayTime).timeout
 	$DiveAttackArea/CollisionShape2D.set_deferred("disabled", true)
@@ -145,82 +157,63 @@ func bombSplatter() -> void:
 	
 	inAttack = false
 
-func closeUpSwipe() -> void:
-	inAttack = true
-	closeUpActive = true
-	
-	var playerRelDir = (tempPlayerPos - position).normalized()
-	var playerPos = tempPlayerPos
-	#var posTweener : Tween = get_tree().create_tween()
-	var swipeTime = calcSwipeTime(position.distance_to(playerPos))
-	
-	if position.distance_to(tempPlayerPos) > min_distance:
-		
-		position += playerRelDir * closeUpSpeed
-	else:
-		print("g")
-		atTempPlayerPos = true
-		$TriangularSwipe.look_at(player.position)
-		$TriangularSwipe/CollisionPolygon2D.set_deferred("disabled", false)
-		$TriangularSwipe/Sprite2D.visible = true
-		
-		await get_tree().create_timer(0.6).timeout
-		
-		$TriangularSwipe/CollisionPolygon2D.set_deferred("disabled", true)
-		$TriangularSwipe/Sprite2D.visible = false
-		
-		closeUpActive = false
-		await get_tree().create_timer(2).timeout
-		inAttack = false
-
-#Split this method into 2: One that runs in update to get to the position, and one that starts the map partitioner
-func mapPartitioner() -> void:
-	var midLoc = bossMapMidPoint.position
-	var targetDir = (midLoc - position).normalized()
-	atMid = false
-	inAttack = true 
-	mapPartiActive = true
-	
-	mapPartiStageOne()
-	
-	if position.distance_to(midLoc) < 10:
-		print("hi")
-		await get_tree().create_timer(.2).timeout
-		for colli in partiColli.get_children():
-			colli.set_deferred("disabled", false)
-		
-		mapPartiStageTwo()
-		
-		for colli in partiColli.get_children():
-			colli.set_deferred("disabled", true)
-		inAttack = false
-		
-	#Rotation Initiation (Main Attack)
-	#if atMid:
-		#canRotate = true
-		#await get_tree().create_timer(0.2).timeout
-		#for colli in partiColli.get_children():
-			#colli.set_deferred("disabled", false)
-		##var rotateTween = get_tree().create_tween()
-		##rotateTween.tween_property(partiColli, "rotation", 4*PI, MapPartiRotateTime).set_trans(Tween.TRANS_LINEAR).as_relative()
+#func closeUpSwipe() -> void:
+	#inAttack = true
+	#closeUpActive = true
+	#
+	#var playerRelDir = (tempPlayerPos - position).normalized()
+	#var playerPos = tempPlayerPos
+	##var posTweener : Tween = get_tree().create_tween()
+	#var swipeTime = calcSwipeTime(position.distance_to(playerPos))
+	#
+	#if position.distance_to(tempPlayerPos) > min_distance:
 		#
-		#partiColli.rotate(angularVel)
-		#await get_tree().create_timer(MapPartiRotateTime).timeout
-		#canRotate = false
-		##print(canRotate)
-		#for colli in partiColli.get_children():
-			#colli.set_deferred("disabled", true)
+		#position += playerRelDir * closeUpSpeed
+	#else:
+		#print("g")
+		#atTempPlayerPos = true
+		#$TriangularSwipe.look_at(player.position)
+		#$TriangularSwipe/CollisionPolygon2D.set_deferred("disabled", false)
+		#$TriangularSwipe/Sprite2D.visible = true
 		#
-		#mapPartiActive = false
+		#await get_tree().create_timer(0.6).timeout
+		#
+		#$TriangularSwipe/CollisionPolygon2D.set_deferred("disabled", true)
+		#$TriangularSwipe/Sprite2D.visible = false
+		#
+		#closeUpActive = false
+		#await get_tree().create_timer(2).timeout
 		#inAttack = false
 
-func mapPartiStageOne() -> void:
-	var moveTween = get_tree().create_tween()
-	moveTween.tween_property($".", "position", bossMapMidPoint.position, 3)
-
-func mapPartiStageTwo() -> void:
-	var rotateTween = get_tree().create_tween()
-	rotateTween.tween_property(partiColli, "rotation", 5*PI, 3)
+func closeUpSwipe() -> void:
+	inAttack = true
+	
+	var tempRelDir = (tempPlayerPos - position).normalized()
+	var playerPos = tempPlayerPos
+	var travelTime = calcSwipeTime(position.distance_to(playerPos))
+	
+	var posTween = get_tree().create_tween()
+	posTween.tween_property($".", "position", playerPos, travelTime)
+	
+	await posTween.finished
+	
+	var collShape = $TriangularSwipe/CollisionPolygon2D
+	var swipeSprite = $TriangularSwipe/Sprite2D
+	var swipeArea = $TriangularSwipe
+	
+	collShape.set_deferred("disabled", false)
+	swipeSprite.visible = true
+	swipeArea.look_at(player.position)
+	
+	audioPlayer.stream = swipeAudio
+	audioPlayer.play()
+	print(audioPlayer.stream)
+	await get_tree().create_timer(0.3).timeout
+	
+	collShape.set_deferred("disabled", true)
+	swipeSprite.visible = false
+	
+	inAttack = false
 
 func closeRangeBombing() -> void:
 	var bombingColl = closeRangeArea.get_child(0)
@@ -231,7 +224,10 @@ func closeRangeBombing() -> void:
 	bombingColl.set_deferred("disabled", false)
 	closeRangeArea.look_at(playerPos)
 	
+	audioPlayer.stream = laserChargeAudio
+	audioPlayer.play()
 	await get_tree().create_timer(1.5).timeout
+	
 	$CloseRangeBombing/Sprite2D.visible = false
 	bombingColl.set_deferred("disabled", true)
 	inAttack = false
@@ -247,82 +243,79 @@ func _physics_process(delta: float) -> void:
 	$AnimationPlayer.play("Float_Idle")
 	global_delta = delta
 	
-	if player.position.x - position.x < 0:
-		$Sprite2D.flip_h = true
-	else:
-		$Sprite2D.flip_h = false
-	#Logic Loop
-	#if battleStarted:
-		#dive_bomb()
+	handleSpriteDir()
+	assignPosStateVariables()
 	
-	if playerDist < bossMapSizeX/4:
-		playerIsClose = true
-		playerIsModerate = false
-		playerIsFar = false
-	elif playerDist < bossMapSizeX/2:
-		playerIsClose = false
-		playerIsModerate = true
-		playerIsFar = false
-	else:
-		playerIsClose = false
-		playerIsModerate = false
-		playerIsFar = true
-	
-	#Close Range - Viable Options - Close Range bombing, Close Up Swipe, Dive Bomb
-	#Moderate Range - Viable Options - Dive Bomb, Close Up Swipe, Map Partitioner, Bomb Splatter
-	#Long Range - Viable options - Dive Bomb, Bomb Splatter, Map Partitioner, Reducing Distance to player (shift to go to moderate range) 
-	#Staying still - possible at all ranges
+	#if Input.is_action_pressed("Dive_Bomb_Test"):
+		#battleStarted = true
+		#print(battleStarted, inAttack)
 	
 	var attackDice : int
-
-	if closeUpActive and not atTempPlayerPos:
-		closeUpSwipe()
-	#if mapPartiActive:
-		#if position.distance_to(bossMapMidPoint.position) > 10:
-			#velocity = (bossMapMidPoint.position - position).normalized() * partMidPointWalkSpeed
-		#else: 
-			#velocity = Vector2.ZERO
-			#atMid = true
-	elif not inAttack and battleStarted:
+	if not inAttack and battleStarted:
 		#print(Time.get_datetime_string_from_system())
 		if playerIsClose:
 			attackDice = randi_range(1,4)
 			
 			match attackDice:
-				1: closeRangeBombing(); print("Close Range Bombing")
-				2: diveBomb(); print("Dive Bomb")
-				3: closeUpSwipe(); print("Close Up Swipe")
-				4: stayStill(); print("Staying Still")
+				1: 
+					closeRangeBombing()
+					print("Close Range Bombing")
+				2: 
+					diveBomb()
+					print("Dive Bomb")
+				3: 
+					tempPlayerPos = player.position
+					closeUpSwipe()
+					print("Close Up Swipe")
+				#4: 
+					#stayStill()
+					#print("Staying Still")
 		
 		elif playerIsModerate:
 			attackDice = randi_range(1,4)
 			
 			match attackDice:
-				1: diveBomb(); print("Dive Bomb")
-				2: closeUpSwipe(); print("Close Up Swipe"); tempPlayerPos = player.position; atTempPlayerPos = false
-				#3: mapPartitioner(); print("Map Partitioner")
-				3: bombSplatter(); print("Bomb Splatter")
-				4: stayStill(); print("Staying Still")
+				1: 
+					diveBomb()
+					print("Dive Bomb")
+				2: 
+					tempPlayerPos = player.position
+					closeUpSwipe()
+					print("Close Up Swipe")
+				3: 
+					bombSplatter()
+					print("Bomb Splatter")
+				#4: 
+					#stayStill()
+					#print("Staying Still")
 		
 		elif playerIsFar:
-			attackDice = randi_range(1,5)
+			attackDice = randi_range(1,3)
 			
 			match attackDice:
-				1: diveBomb(); print("Dive Bomb")
-				2: bombSplatter(); print("Bomb Splatter")
-				#3: mapPartitioner(); print("Map Partitioner")
-				3: pass #Work on a function to close up to moderate range
-				4: stayStill(); print("Staying Still")
+				1: 
+					diveBomb()
+					print("Dive Bomb")
+				2: 
+					bombSplatter()
+					print("Bomb Splatter")
+				3: 
+					stayStill()
+					print("Staying Still")
 	
 	handleDialog()
 	move_and_slide()
 
 func set_health(valChange) -> void:
 	hp += valChange
-	hp_bar.set_hp(hp)
 	
 	if hp <= 0:
+		await get_tree().create_timer(0.5).timeout
+		get_tree().change_scene_to_file("res://PreWinScreen.tscn")
 		queue_free()
+	
+	hp_bar.set_hp(hp)
+
 
 func _on_hurt_box_area_entered(area: Area2D) -> void:
 	if area.get_parent().is_in_group("Player_attack") and area.get_parent().is_in_group("AreaEffect"):
@@ -341,7 +334,7 @@ func calcSwipeTime(playerDist) -> float:
 	#Ok. So... let's figure this out. Try 1: Very rudimentary solution.
 	
 	var workAroundDist = playerDist
-	workAroundDist = workAroundDist/1000*2
+	workAroundDist = workAroundDist/1000 * 1.5
 	return workAroundDist
 
 func handleDialog() -> void:
@@ -352,3 +345,75 @@ func handleDialog() -> void:
 func DialogAreaEntered(area: Area2D) -> void:
 	canStartDialog = true
 	$DialogStartArea.queue_free()
+
+func handleSpriteDir():
+	if player.position.x - position.x < 0:
+		$Sprite2D.flip_h = true
+	else:
+		$Sprite2D.flip_h = false
+
+func assignPosStateVariables():
+	if playerDist < bossMapSizeX/4:
+		playerIsClose = true
+		playerIsModerate = false
+		playerIsFar = false
+	elif playerDist < bossMapSizeX/2:
+		playerIsClose = false
+		playerIsModerate = true
+		playerIsFar = false
+	else:
+		playerIsClose = false
+		playerIsModerate = false
+		playerIsFar = true
+
+
+#func mapPartitioner() -> void:
+	#var midLoc = bossMapMidPoint.position
+	#var targetDir = (midLoc - position).normalized()
+	#atMid = false
+	#inAttack = true 
+	#mapPartiActive = true
+	#
+	#mapPartiStageOne()
+	#
+	#if position.distance_to(midLoc) < 10:
+		#print("hi")
+		#await get_tree().create_timer(.2).timeout
+		#for colli in partiColli.get_children():
+			#colli.set_deferred("disabled", false)
+		#
+		#mapPartiStageTwo()
+		#
+		#for colli in partiColli.get_children():
+			#colli.set_deferred("disabled", true)
+		#inAttack = false
+		#
+	##Rotation Initiation (Main Attack)
+	##if atMid:
+		##canRotate = true
+		##await get_tree().create_timer(0.2).timeout
+		##for colli in partiColli.get_children():
+			##colli.set_deferred("disabled", false)
+		###var rotateTween = get_tree().create_tween()
+		###rotateTween.tween_property(partiColli, "rotation", 4*PI, MapPartiRotateTime).set_trans(Tween.TRANS_LINEAR).as_relative()
+		##
+		##partiColli.rotate(angularVel)
+		##await get_tree().create_timer(MapPartiRotateTime).timeout
+		##canRotate = false
+		###print(canRotate)
+		##for colli in partiColli.get_children():
+			##colli.set_deferred("disabled", true)
+		##
+		##mapPartiActive = false
+		##inAttack = false
+#
+#func mapPartiStageOne() -> void:
+	#var moveTween = get_tree().create_tween()
+	#moveTween.tween_property($".", "position", bossMapMidPoint.position, 3)
+#
+#func mapPartiStageTwo() -> void:
+	#var rotateTween = get_tree().create_tween()
+	#rotateTween.tween_property(partiColli, "rotation", 5*PI, 3)
+
+func startBattle():
+	battleStarted = true

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://d252ox6ns4ut2"]
 
-[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Laser Bullet.png" id="1_dbva5"]
+[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Attack Sprites/Laser Bullet.png" id="1_dbva5"]
 [ext_resource type="Script" path="res://Scenes/splatterBomb.gd" id="1_lpgtm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lkirm"]

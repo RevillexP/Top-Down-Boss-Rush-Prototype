@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://Scripts/Boss.gd" id="1_bj3gw"]
 [ext_resource type="Texture2D" uid="uid://dve382qafxr7l" path="res://GFX/Stage 1 Boss.png" id="1_dcm06"]
-[ext_resource type="Texture2D" uid="uid://lkem6se35syg" path="res://GFX/TriangularSwipe.png" id="3_16eyj"]
-[ext_resource type="Texture2D" uid="uid://cy4dtq0yc055l" path="res://GFX/Laser Attack.png" id="3_n2rp0"]
+[ext_resource type="Texture2D" uid="uid://lkem6se35syg" path="res://GFX/Attack Sprites/TriangularSwipe.png" id="3_16eyj"]
+[ext_resource type="Texture2D" uid="uid://cy4dtq0yc055l" path="res://GFX/Attack Sprites/Laser Attack.png" id="3_n2rp0"]
 
 [sub_resource type="Animation" id="Animation_hmgbh"]
 resource_name = "Float_Idle"
@@ -109,6 +109,8 @@ scale = Vector2(2.5, 2.5)
 shape = SubResource("RectangleShape2D_ficbs")
 
 [node name="CloseRangeBombing" type="Area2D" parent="."]
+collision_layer = 5
+collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CloseRangeBombing"]
 position = Vector2(783.75, -30)
@@ -133,6 +135,8 @@ shape = SubResource("RectangleShape2D_j2jxw")
 disabled = true
 
 [node name="TriangularSwipe" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 16
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="TriangularSwipe"]
 scale = Vector2(0.678121, 0.540588)
@@ -145,6 +149,11 @@ rotation = -1.5708
 scale = Vector2(2.01765, 1.92034)
 texture = ExtResource("3_16eyj")
 
-[connection signal="area_entered" from="HurtBox" to="." method="_on_area_2d_area_entered"]
+[node name="SFX" type="Node" parent="."]
+
+[node name="AudioPlayer" type="AudioStreamPlayer2D" parent="SFX"]
+volume_db = 16.0
+
 [connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]
+[connection signal="area_entered" from="HurtBox" to="." method="_on_area_2d_area_entered"]
 [connection signal="area_entered" from="DialogStartArea" to="." method="DialogAreaEntered"]

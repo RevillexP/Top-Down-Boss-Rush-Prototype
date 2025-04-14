@@ -1,7 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://1vw6d0oipyxu"]
+[gd_scene load_steps=11 format=3 uid="uid://1vw6d0oipyxu"]
 
 [ext_resource type="Script" path="res://Scripts/Player.gd" id="1_06jsy"]
-[ext_resource type="Texture2D" uid="uid://d3wwc4waapelb" path="res://GFX/Phighting Character Rendition 2.png" id="2_r50pq"]
+[ext_resource type="Texture2D" uid="uid://d3wwc4waapelb" path="res://GFX/Player Character/Phighting Character Rendition 2.png" id="2_r50pq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lpp56"]
 size = Vector2(30, 112)
@@ -35,6 +35,20 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h6nsa"]
 size = Vector2(27, 114)
 
+[sub_resource type="Curve" id="Curve_o56xs"]
+min_value = -360.0
+max_value = 360.0
+_data = [Vector2(0, 268.097), 0.0, 0.0, 0, 0, Vector2(1e-05, -7.61328), 0.0, 0.0, 0, 0, Vector2(1, -240.906), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_jqjpl"]
+_data = [Vector2(0.0477941, 1), 0.0, 0.0, 0, 0, Vector2(0.922794, 0.332326), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_c6cqg"]
+offsets = PackedFloat32Array(0, 0.557377, 1)
+colors = PackedColorArray(0.679363, 0.704471, 0.999939, 1, 0.900461, 0.203759, 0.604835, 1, 0.566428, 0.348077, 1, 1)
+
 [node name="CharacterBody2D" type="CharacterBody2D" groups=["Player"]]
 position = Vector2(960, 540)
 collision_layer = 8
@@ -45,10 +59,11 @@ dash_cd = 0.2
 laser_speed = 2000.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(18, -17)
+position = Vector2(2, -21)
 shape = SubResource("RectangleShape2D_lpp56")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-18, 0)
 scale = Vector2(0.45, 0.45)
 texture = ExtResource("2_r50pq")
 
@@ -58,11 +73,39 @@ libraries = {
 }
 
 [node name="HurtBox" type="Area2D" parent="."]
+position = Vector2(-16, -4)
 collision_layer = 8
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
 position = Vector2(17.5, -16)
 shape = SubResource("RectangleShape2D_h6nsa")
+
+[node name="DeathFX" type="CPUParticles2D" parent="."]
+process_mode = 3
+emitting = false
+amount = 50
+lifetime = 2.0
+one_shot = true
+explosiveness = 0.6
+emission_shape = 2
+emission_sphere_radius = 8.89
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 260.73
+initial_velocity_max = 534.7
+angular_velocity_min = 157.81
+angular_velocity_max = 177.53
+angular_velocity_curve = SubResource("Curve_o56xs")
+orbit_velocity_min = 0.3
+orbit_velocity_max = 0.6
+radial_accel_min = 20.55
+radial_accel_max = 97.26
+tangential_accel_min = 100.0
+tangential_accel_max = 100.0
+scale_amount_min = 16.64
+scale_amount_max = 23.9
+scale_amount_curve = SubResource("Curve_jqjpl")
+color_ramp = SubResource("Gradient_c6cqg")
 
 [connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]

@@ -12,7 +12,7 @@ func set_hp(new_health : float):
 	value = float(health)
 	
 	if health <= 0:
-		queue_free()
+		visible=false
 	
 	if health < prev_health:
 		if not is_instance_valid(timer): timer = $Timer

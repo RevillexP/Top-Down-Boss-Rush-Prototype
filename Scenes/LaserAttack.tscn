@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dp5ik5r1dkqtp"]
 
 [ext_resource type="Script" path="res://Scripts/laser.gd" id="1_0asxy"]
-[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Laser Bullet.png" id="2_oive0"]
+[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Attack Sprites/Laser Bullet.png" id="2_oive0"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_l0bn3"]
 

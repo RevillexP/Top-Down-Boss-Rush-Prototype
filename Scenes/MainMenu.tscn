@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://bfcl62kgkh8bc"]
+[gd_scene load_steps=6 format=3 uid="uid://bfcl62kgkh8bc"]
 
 [ext_resource type="Script" path="res://Scripts/Menu.gd" id="1_ogllo"]
+[ext_resource type="Texture2D" uid="uid://clntsgdgx4t3i" path="res://85723560_p0_master1200.jpg" id="2_h518m"]
+[ext_resource type="FontFile" uid="uid://b8whhom0g7mol" path="res://Fonts/WisdomVacation.ttf" id="2_mk40y"]
+[ext_resource type="FontFile" uid="uid://bcsf5updmqrmp" path="res://Fonts/AMORIA.otf" id="3_ysk3a"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ukojp"]
+texture = ExtResource("2_h518m")
+modulate_color = Color(0.09, 0.09, 0.09, 1)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -11,20 +18,77 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ogllo")
 
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_ukojp")
+
 [node name="RichTextLabel" type="RichTextLabel" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -957.5
+offset_right = 957.5
+offset_bottom = 214.0
+grow_horizontal = 2
+theme_override_colors/default_color = Color(0.38835, 0.405834, 0.602539, 1)
+theme_override_fonts/normal_font = ExtResource("2_mk40y")
+theme_override_font_sizes/normal_font_size = 200
+bbcode_enabled = true
+text = "[center] Ulatare [/center]"
+scroll_active = false
+tab_size = 24
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 640.0
-offset_top = 388.0
-offset_right = 680.0
-offset_bottom = 428.0
-scale = Vector2(13.5174, 13.406)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -410.0
+offset_top = -207.0
+offset_right = 416.0
+offset_bottom = 208.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
 
 [node name="Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.41, 1, 0.606667, 1)
+theme_override_fonts/font = ExtResource("3_ysk3a")
+theme_override_font_sizes/font_size = 100
+text = "Play"
+
+[node name="Button2" type="Button" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.41, 1, 0.606667, 1)
+theme_override_fonts/font = ExtResource("3_ysk3a")
+theme_override_font_sizes/font_size = 100
+text = "Settings"
+
+[node name="Button3" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.41, 1, 0.606667, 1)
+theme_override_fonts/font = ExtResource("3_ysk3a")
+theme_override_font_sizes/font_size = 100
+text = "Exit"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+volume_db = -20.0
 
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Button3" to="." method="exitButtonPressed"]

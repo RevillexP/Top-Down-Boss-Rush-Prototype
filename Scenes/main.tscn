@@ -1,39 +1,61 @@
-[gd_scene load_steps=7 format=3 uid="uid://cw3vj27glq5k4"]
+[gd_scene load_steps=19 format=3 uid="uid://cw3vj27glq5k4"]
 
 [ext_resource type="Script" path="res://Scripts/World.gd" id="1_xbb8i"]
 [ext_resource type="Texture2D" uid="uid://cvgibl718tlyv" path="res://GFX/Stage1Background.png" id="2_5grku"]
 [ext_resource type="PackedScene" uid="uid://1vw6d0oipyxu" path="res://Scenes/Player.tscn" id="2_ojswc"]
 [ext_resource type="PackedScene" uid="uid://dk5bgua8t61vn" path="res://Scenes/Stage1Boss.tscn" id="4_q6b5c"]
-[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Laser Bullet.png" id="5_t356n"]
+[ext_resource type="Texture2D" uid="uid://k3ovbjqnvfeb" path="res://GFX/Attack Sprites/Laser Bullet.png" id="5_t356n"]
 [ext_resource type="PackedScene" uid="uid://hm0nlqe7dui6" path="res://Scenes/HealthBar.tscn" id="5_vu1md"]
+[ext_resource type="Texture2D" uid="uid://bqmwfvlbf30ef" path="res://GFX/Pathway.png" id="6_nbh3m"]
+[ext_resource type="Texture2D" uid="uid://n2irv2jnganp" path="res://GFX/MapMain.png" id="7_tn2ay"]
+[ext_resource type="FontFile" uid="uid://b8whhom0g7mol" path="res://Fonts/WisdomVacation.ttf" id="9_dnh5p"]
+[ext_resource type="Script" path="res://SlamCDBar.gd" id="9_mglt4"]
+[ext_resource type="FontFile" uid="uid://bcsf5updmqrmp" path="res://Fonts/AMORIA.otf" id="10_rsqw5"]
+[ext_resource type="AudioStream" uid="uid://sgpy2grpogu8" path="res://SFX/energetic-bgm-242515.mp3" id="12_cmqo1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qyfe6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6qryt"]
+bg_color = Color(0.606148, 0.569409, 0.98873, 0.686275)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vj20f"]
+size = Vector2(2967, 3800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_47tr6"]
+size = Vector2(1443, 5453)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xhs67"]
+size = Vector2(7040, 2694)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fajlw"]
+size = Vector2(1322, 1369)
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_xbb8i")
 
-[node name="BG" type="Sprite2D" parent="."]
+[node name="BG" type="Node" parent="."]
+
+[node name="Pathway" type="Sprite2D" parent="BG"]
+z_index = -5
+position = Vector2(6979.5, -1903)
+scale = Vector2(8.81, 7.652)
+texture = ExtResource("6_nbh3m")
+
+[node name="MapMain" type="Sprite2D" parent="BG"]
+z_index = -5
+position = Vector2(6942, -6532)
+scale = Vector2(54.4805, 54.4805)
+texture = ExtResource("7_tn2ay")
+
+[node name="TempBG" type="Sprite2D" parent="BG"]
+visible = false
 position = Vector2(960, 540)
 scale = Vector2(2, 2)
 texture = ExtResource("2_5grku")
 
-[node name="Player" parent="." node_paths=PackedStringArray("healthText", "bulletHolder") instance=ExtResource("2_ojswc")]
-position = Vector2(1355, -143)
-health = 15
-healthText = NodePath("../CanvasLayer/PlayerHealth")
-dash_speed = 2400.0
-dash_dur = 0.175
-dash_cd = 0.15
-bulletHolder = NodePath("../Holders/Bullets")
-bullet_cd = 0.15
-
-[node name="Camera2D" type="Camera2D" parent="Player"]
-position = Vector2(-960, -540)
-offset = Vector2(960, 540)
-
 [node name="Holders" type="Node" parent="."]
 
 [node name="Enemies" type="Node" parent="Holders"]
-
-[node name="Bullets" type="Node" parent="Holders"]
 
 [node name="ExplosionHolder" type="Node" parent="Holders"]
 
@@ -57,15 +79,32 @@ position = Vector2(1536, 357)
 [node name="Spawn Timer" type="Timer" parent="Holders"]
 autostart = true
 
-[node name="Luita" parent="." node_paths=PackedStringArray("hp_bar", "player", "roomCorner1", "roomCorner2", "bombSplatterC1", "bombSplatterC2", "bossMapMidPoint") instance=ExtResource("4_q6b5c")]
-position = Vector2(723, -559)
+[node name="Player" parent="." node_paths=PackedStringArray("healthText", "hp_bar", "slamCDBar", "bulletHolder") instance=ExtResource("2_ojswc")]
+position = Vector2(6958, -412)
+healthText = NodePath("../CanvasLayer/PlayerHealthBar")
+hp_bar = NodePath("../CanvasLayer/PlayerHealthBar2")
+slamCDBar = NodePath("../CanvasLayer/SlamCDBar")
+dash_speed = 2400.0
+dash_dur = 0.175
+dash_cd = 0.15
+bulletHolder = NodePath("Bullets")
+bullet_cd = 0.15
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+
+[node name="Bullets" type="Node" parent="Player"]
+
+[node name="Luita" parent="." node_paths=PackedStringArray("audioPlayer", "hp_bar", "player", "roomCorner1", "roomCorner2", "bombSplatterC1", "bombSplatterC2", "bossMapMidPoint") instance=ExtResource("4_q6b5c")]
+position = Vector2(7021, -6343)
+audioPlayer = NodePath("../Audio")
+hp = 4.0
 hp_bar = NodePath("../CanvasLayer/HealthBar")
 player = NodePath("../Player")
 roomCorner1 = NodePath("../BossStageC1")
 roomCorner2 = NodePath("../BossStageC2")
 soar_height = 1050.0
 soar_time = 0.4
-bombSplatterInBTW = 0.08
+bombSplatterCount = 50.0
 bombSplatterC1 = NodePath("BombSplatterCorner1")
 bombSplatterC2 = NodePath("BombSplatterCorner2")
 closeUpSpeed = 18.0
@@ -79,6 +118,7 @@ position = Vector2(2042.5, 1415)
 scale = Vector2(2.5, 2.5)
 
 [node name="Sprite2D" type="Sprite2D" parent="Luita/BombSplatterCorner1"]
+visible = false
 modulate = Color(0, 0, 0, 1)
 texture = ExtResource("5_t356n")
 
@@ -87,6 +127,7 @@ position = Vector2(-3725, -3447.5)
 scale = Vector2(2.5, 2.5)
 
 [node name="Sprite2D" type="Sprite2D" parent="Luita/BombSplatterCorner2"]
+visible = false
 modulate = Color(0, 0, 0, 1)
 texture = ExtResource("5_t356n")
 
@@ -107,19 +148,167 @@ grow_vertical = 0
 size_flags_horizontal = 4
 size_flags_vertical = 8
 
-[node name="PlayerHealth" type="Label" parent="CanvasLayer"]
+[node name="PlayerHealthBar" type="Label" parent="CanvasLayer"]
 offset_right = 539.0
 offset_bottom = 92.0
 theme_override_font_sizes/font_size = 50
 text = "tejdfddghfg"
 
+[node name="PlayerHealthBar2" parent="CanvasLayer" instance=ExtResource("5_vu1md")]
+offset_right = 347.0
+
+[node name="SlamCDBar" type="ProgressBar" parent="CanvasLayer"]
+z_index = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -425.0
+offset_top = -412.0
+offset_right = -78.0
+offset_bottom = -375.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxEmpty_qyfe6")
+theme_override_styles/fill = SubResource("StyleBoxFlat_6qryt")
+value = 23.0
+show_percentage = false
+script = ExtResource("9_mglt4")
+
+[node name="Timer" type="Timer" parent="CanvasLayer/SlamCDBar"]
+wait_time = 0.4
+
 [node name="BossMapMidPoint" type="Marker2D" parent="."]
-position = Vector2(454, -963)
+position = Vector2(6980, -6424)
 
 [node name="BossStageC1" type="Marker2D" parent="."]
-position = Vector2(1515, 73)
+position = Vector2(9240, -4360)
 
 [node name="BossStageC2" type="Marker2D" parent="."]
-position = Vector2(-728, -1913)
+position = Vector2(4676, -8877)
+
+[node name="Death Menu" type="CanvasLayer" parent="."]
+process_mode = 3
+
+[node name="Panel" type="Panel" parent="Death Menu"]
+self_modulate = Color(1, 1, 1, 0.509804)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 153.0
+offset_top = 75.0
+offset_right = 153.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.800661, 0.800661)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+metadata/_edit_use_anchors_ = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Death Menu/Panel"]
+offset_left = 278.52
+offset_top = 188.594
+offset_right = 1369.52
+offset_bottom = 282.594
+theme_override_fonts/normal_font = ExtResource("9_dnh5p")
+theme_override_font_sizes/normal_font_size = 70
+bbcode_enabled = true
+text = "[center]You have fumbled the bag.[/center]"
+metadata/_edit_use_anchors_ = true
+
+[node name="RetryButton" type="Button" parent="Death Menu/Panel"]
+offset_left = 572.027
+offset_top = 482.102
+offset_right = 1137.03
+offset_bottom = 589.102
+theme_override_fonts/font = ExtResource("10_rsqw5")
+theme_override_font_sizes/font_size = 50
+text = "Try Again?"
+metadata/_edit_use_anchors_ = true
+
+[node name="QuitButton" type="Button" parent="Death Menu/Panel"]
+offset_left = 599.505
+offset_top = 764.368
+offset_right = 1135.5
+offset_bottom = 891.368
+theme_override_fonts/font = ExtResource("10_rsqw5")
+theme_override_font_sizes/font_size = 50
+text = "Quit?"
+metadata/_edit_use_anchors_ = true
+
+[node name="Audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_cmqo1")
+
+[node name="BGAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_cmqo1")
+
+[node name="Walls" type="Node" parent="."]
+
+[node name="PathWalls" type="Node" parent="Walls"]
+
+[node name="PathWallsBodies" type="StaticBody2D" parent="Walls/PathWalls"]
+
+[node name="PathWallLeft" type="CollisionShape2D" parent="Walls/PathWalls/PathWallsBodies"]
+position = Vector2(5050.5, -1921)
+shape = SubResource("RectangleShape2D_vj20f")
+
+[node name="PathWallRight" type="CollisionShape2D" parent="Walls/PathWalls/PathWallsBodies"]
+position = Vector2(8912, -1903)
+shape = SubResource("RectangleShape2D_vj20f")
+
+[node name="PathWallBottom" type="CollisionShape2D" parent="Walls/PathWalls/PathWallsBodies"]
+position = Vector2(6874, 1886)
+shape = SubResource("RectangleShape2D_vj20f")
+
+[node name="MainAreaWalls" type="Node" parent="Walls"]
+
+[node name="MainAreaWallsBodies" type="StaticBody2D" parent="Walls/MainAreaWalls"]
+
+[node name="MainAreaWallLeft" type="CollisionShape2D" parent="Walls/MainAreaWalls/MainAreaWallsBodies"]
+position = Vector2(3512.5, -6544.5)
+shape = SubResource("RectangleShape2D_47tr6")
+
+[node name="MainAreaWallRight" type="CollisionShape2D" parent="Walls/MainAreaWalls/MainAreaWallsBodies"]
+position = Vector2(10400, -6525)
+shape = SubResource("RectangleShape2D_47tr6")
+
+[node name="MainAreaWallTop" type="CollisionShape2D" parent="Walls/MainAreaWalls/MainAreaWallsBodies"]
+position = Vector2(6923, -10598)
+shape = SubResource("RectangleShape2D_xhs67")
+
+[node name="MainAreaCorners" type="Node" parent="Walls"]
+
+[node name="CornerBodies" type="StaticBody2D" parent="Walls/MainAreaCorners"]
+
+[node name="Corner1" type="CollisionPolygon2D" parent="Walls/MainAreaCorners/CornerBodies"]
+position = Vector2(4290, -4563)
+polygon = PackedVector2Array(21, 11, 204, 23, 539, 359, 545, 512, 608, 515, 608, 707, -39, 707, -39, 8)
+
+[node name="Corner2" type="CollisionPolygon2D" parent="Walls/MainAreaCorners/CornerBodies"]
+position = Vector2(9013, -4581)
+polygon = PackedVector2Array(73, 402, 356, 231, 660, 204, 660, 680, -39, 707)
+
+[node name="Corner3" type="CollisionPolygon2D" parent="Walls/MainAreaCorners/CornerBodies"]
+position = Vector2(8973, -9288)
+polygon = PackedVector2Array(73, 402, 2, 43, 674, 73, 660, 680, 251, 692)
+
+[node name="Corner4" type="CollisionPolygon2D" parent="Walls/MainAreaCorners/CornerBodies"]
+position = Vector2(4231, -9296)
+polygon = PackedVector2Array(12, 844, 2, 43, 538, 42, 530, 397, 334, 631)
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(7021, -6343)
+collision_layer = 0
+collision_mask = 24
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(25, -19.5)
+shape = SubResource("RectangleShape2D_fajlw")
 
 [connection signal="timeout" from="Holders/Spawn Timer" to="." method="_on_spawn_timer_timeout"]
+[connection signal="timeout" from="CanvasLayer/SlamCDBar/Timer" to="CanvasLayer/SlamCDBar" method="_on_timer_timeout"]
+[connection signal="pressed" from="Death Menu/Panel/RetryButton" to="." method="RetryButtonPressed"]
+[connection signal="pressed" from="Death Menu/Panel/QuitButton" to="." method="QuitButtonPressed"]
+[connection signal="area_entered" from="Area2D" to="." method="OnBattleStartAreaEntered"]
