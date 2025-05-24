@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 #TODO: When you add the animations, make all attacks WAIT for it finish using signals, then start. that should be good i hope.
-#3/15/25 This is so godsbedamned fucking frustrating 
+#3/15/25 This is so godsbedamned frustrating 
 
 #region Debug Variables
 var global_delta : float
