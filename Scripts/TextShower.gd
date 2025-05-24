@@ -1,10 +1,6 @@
 extends Label
 
-@export var message := "Heyo. Thanks a bunch for trying this game out. Honestly means the world to me. Now, this probably took you like 15-30 minutes to finish,
-heck, maybe even 5, but still, making a game's been a dream of mine for years, 
-and I started with this. Fighting games rock, right?
-I hope I'll see you in my next project.
-\n\nBest of luck with whatever you end up doing, homie. ♡"
+@export var message := "Heyo. Thanks a bunch for trying this game out. Honestly means the world to me ♡."
 @export var punctuation_time := 0.07
 @export var space_time := 0.05
 @export var full_stop_time := 0.1
